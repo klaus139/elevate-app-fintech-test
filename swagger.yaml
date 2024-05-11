@@ -1,0 +1,266 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "Budget API"
+  description: "API documentation for budget management."
+  contact:
+    name: "Your Name"
+    email: "your@email.com"
+paths:
+  /api/v1/budget:
+    post:
+      summary: "Create Budget"
+      description: "Create a new budget."
+      tags:
+        - "Budget"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Budget object that needs to be created."
+          required: true
+          schema:
+            $ref: "#/definitions/BudgetInput"
+      responses:
+        201:
+          description: "Budget created successfully"
+          schema:
+            $ref: "#/definitions/Budget"
+        400:
+          description: "Bad request"
+        500:
+          description: "Internal server error"
+  /api/v1/budget:
+    get:
+      summary: "Get Budget"
+      description: "Get the budget for the logged-in user."
+      tags:
+        - "Budget"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            $ref: "#/definitions/Budget"
+        404:
+          description: "Budget not found"
+        500:
+          description: "Internal server error"
+definitions:
+  Budget:
+    type: "object"
+    properties:
+      user:
+        type: "string"
+      categories:
+        type: "array"
+        items:
+          $ref: "#/definitions/BudgetCategory"
+  BudgetInput:
+    type: "object"
+    properties:
+      categories:
+        type: "array"
+        items:
+          $ref: "#/definitions/BudgetCategoryInput"
+  BudgetCategory:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      amount:
+        type: "number"
+  BudgetCategoryInput:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      amount:
+        type: "number"
+
+paths:
+  /api/v1/expense/report:
+    get:
+      summary: "Generate Expense Report"
+      description: "Generate an expense report including total expenses and remaining budget."
+      tags:
+        - "Expense"
+      security:
+        - jwt: []
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            type: "object"
+            properties:
+              totalExpenses:
+                type: "number"
+                description: "Total amount spent on expenses"
+              remainingBudget:
+                type: "number"
+                description: "Remaining budget after deducting total expenses"
+        400:
+          description: "Bad request"
+        401:
+          description: "Unauthorized"
+        500:
+          description: "Internal server error"
+securityDefinitions:
+  jwt:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+    description: "JWT authorization token"
+
+paths:
+  /api/v1/expense:
+    post:
+      summary: "Add Expense"
+      description: "Add a new expense."
+      tags:
+        - "Expense"
+      security:
+        - jwt: []
+      consumes:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Expense data"
+          required: true
+          schema:
+            $ref: "#/definitions/Expense"
+      responses:
+        201:
+          description: "Expense created successfully"
+          schema:
+            type: "object"
+            properties:
+              msg:
+                type: "string"
+                description: "Success message"
+              expense:
+                $ref: "#/definitions/Expense"
+        400:
+          description: "Bad request"
+        401:
+          description: "Unauthorized"
+        500:
+          description: "Internal server error"
+
+    get:
+      summary: "Get All Expenses"
+      description: "Retrieve all expenses."
+      tags:
+        - "Expense"
+      security:
+        - jwt: []
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Expense"
+        400:
+          description: "Bad request"
+        401:
+          description: "Unauthorized"
+        500:
+          description: "Internal server error"
+
+  /api/v1/expense/{id}:
+    put:
+      summary: "Update Expense"
+      description: "Update an existing expense by ID."
+      tags:
+        - "Expense"
+      security:
+        - jwt: []
+      consumes:
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Expense ID"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "Expense data to update"
+          required: true
+          schema:
+            $ref: "#/definitions/Expense"
+      responses:
+        200:
+          description: "Expense updated successfully"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                description: "Success message"
+              expense:
+                $ref: "#/definitions/Expense"
+        400:
+          description: "Bad request"
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Expense not found"
+        500:
+          description: "Internal server error"
+
+    delete:
+      summary: "Delete Expense"
+      description: "Delete an existing expense by ID."
+      tags:
+        - "Expense"
+      security:
+        - jwt: []
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Expense ID"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Expense deleted successfully"
+          schema:
+            type: "object"
+            properties:
+              success:
+                type: "boolean"
+                description: "Success flag"
+              message:
+                type: "string"
+                description: "Success message"
+        400:
+          description: "Bad request"
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Expense not found"
+        500:
+          description: "Internal server error"
+
+definitions:
+  Expense:
+    type: "object"
+    properties:
+      amount:
+        type: "number"
+        description: "Expense amount"
+      category:
+        type: "string"
+        description: "Expense category"
+      description:
+        type: "string"
+        description: "Expense description"

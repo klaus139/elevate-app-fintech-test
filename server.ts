@@ -1,4 +1,5 @@
-import { app } from "./app";
+import { app, server } from "./app";
+
 import connectDB from './utils/db'
 require("dotenv").config();
 //cloudinary config
@@ -7,7 +8,7 @@ require("dotenv").config();
 const port = 8000;
 
 //create server
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Server is connected with port ${port}`);
     connectDB();
 })
