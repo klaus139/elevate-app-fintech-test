@@ -13,18 +13,18 @@ interface ITokenOptions {
 }
 
 const accessTokenExpire = parseInt(
-  process.env.ACCESS_TOKEN_EXPIRE || "300",
+  process.env.ACCESS_TOKEN_EXPIRE || "3000",
   10
 );
 const refreshTokenExpire = parseInt(
-  process.env.REFRESH_TOKEN_EXPIRE || "1200",
+  process.env.REFRESH_TOKEN_EXPIRE || "12000",
   10
 );
 
 //optons for cookies
 export const accessTokenOptions: ITokenOptions = {
-  expires: new Date(Date.now() + accessTokenExpire * 60 * 60 * 1000),
-  maxAge: accessTokenExpire * 60 * 60 * 1000,
+  expires: new Date(Date.now() + accessTokenExpire * 60 * 60 * 15 * 1000),
+  maxAge: accessTokenExpire * 60 * 60 * 15 * 1000,
   httpOnly: true,
   sameSize: "lax",
 };

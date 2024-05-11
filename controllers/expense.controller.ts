@@ -16,10 +16,7 @@ export const addExpense = CatchAsyncError(async (req: JwtPayload, res: Response,
     try {
         const {  amount, category, description } = req.body as IExpense;
 
-        // Validations
-        if (  !category || !description || amount) {
-            return next(new ErrorHandler("All fields are required", 400));
-        }
+
         if (amount <= 0) {
             return next(new ErrorHandler("Amount must be greater than zero", 400));
         }
@@ -40,11 +37,52 @@ export const addExpense = CatchAsyncError(async (req: JwtPayload, res: Response,
 });
 
 
+export const updateExpense = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const expenseId = req.params.id; // Assuming the expense ID is passed as a route parameter
+        const { amount, category, description } = req.body as Partial<IExpense>;
+
+        // Check if the provided expense ID is valid
+        if (!expenseId) {
+            return next(new ErrorHandler("Expense ID is required", 400));
+        }
+
+        // Find the expense document by ID
+        let expense = await expenseModel.findById(expenseId);
+
+        // If no expense found, return error
+        if (!expense) {
+            return next(new ErrorHandler("Expense not found", 404));
+        }
+
+        // Update expense properties if provided
+        if (amount !== undefined) {
+            expense.amount = amount;
+        }
+        if (category !== undefined) {
+            expense.category = category;
+        }
+        if (description !== undefined) {
+            expense.description = description;
+        }
+
+        // Save the updated expense
+        expense = await expense.save();
+
+        // Return success response with the updated expense
+        res.status(200).json({ message: "Expense updated successfully", expense });
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+});
+
+
+
+
+
 export const getAllExpense = CatchAsyncError(async(req:JwtPayload, res:Response, next:NextFunction) => {
     try{
-        const expense = await expenseModel.find({
-            user: req.user.id
-        }).sort({ date: -1 });
+        const expense = await expenseModel.find()
         res.status(200).json(expense)
 
     }catch(error:any){

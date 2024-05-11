@@ -3,7 +3,6 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 export interface IIncome extends Document {
    amount: number;
    date: Date;
-   category: string;
    description: string;
    user: mongoose.Types.ObjectId; 
 }
@@ -19,7 +18,6 @@ const incomeSchema: Schema<IIncome> = new Schema<IIncome>({
    
     date: {
         type: Date,
-        required: true,
         trim: true
     },
    

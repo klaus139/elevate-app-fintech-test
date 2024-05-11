@@ -21,7 +21,6 @@ const expenseSchema: Schema<IExpense> = new Schema<IExpense>({
    
     date: {
         type: Date,
-        required: true,
         trim: true
     },
     category: {

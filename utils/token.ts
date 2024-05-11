@@ -19,7 +19,7 @@ export const createActivationToken = (user: any): IActivationToken => {
       },
       process.env.ACTIVATION_SECRET!,
       {
-        expiresIn: "5m",
+        expiresIn: "15m",
       }
     );
     return { token, activationCode };

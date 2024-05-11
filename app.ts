@@ -1,11 +1,12 @@
 import express, { Request, Response, NextFunction } from 'express';
 require('dotenv').config();
+import morgan from "morgan"
 import { ErrorMiddleWare } from './middleware/Error';
 import userRouter from './routes/user.route';
 import budgetRouter from './routes/budget.route';
-// import orderRouter from "./routes/order.route";
-// import notificationRoute from './routes/notification.route';
-// import analyticsRouter from './routes/analytics.route';
+import expenseRouter from './routes/expense.route';
+import incomeRouter from './routes/income.route';
+import reportRouter from './routes/report.controller';
 // import layoutRouter from './routes/layout.route';
 export const app = express();
 
@@ -17,6 +18,8 @@ app.use(express.json({limit: '50mb'}));
 
 //cookier-parser
 app.use(cookieParser());
+
+app.use(morgan("dev"))
 
 
 
@@ -31,9 +34,9 @@ app.use(cors({
 //routes
 app.use('/api/v1', userRouter);
 app.use('/api/v1', budgetRouter);
-// app.use('/api/v1', orderRouter);
-// app.use('/api/v1', notificationRoute);
-// app.use('/api/v1', analyticsRouter)
+app.use('/api/v1', expenseRouter);
+app.use('/api/v1', incomeRouter);
+app.use('/api/v1', reportRouter)
 
 
 
