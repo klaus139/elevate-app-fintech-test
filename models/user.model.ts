@@ -4,16 +4,13 @@ import validator from 'validator';
 require('dotenv').config();
 import jwt from 'jsonwebtoken';
 
-//const emailRegexPattern: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+s/;
-
 export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  
   role: string;
   isVerified: boolean;
-  account: Array<{ accountId: string }>;
+
   comparePassword: (password: string) => Promise<boolean>;
   SignAccessToken: () => string;
   SignRefreshToken: () => string;
@@ -39,9 +36,8 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
     password: {
       type: String,
       minlength: [6, "password cannot be less than 6 characters"],
-      select: false, //hides the password field in the response when we get data from db
+      select: false,
     },
-   
     role: {
       type: String,
       default: "user",
@@ -50,16 +46,11 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    account: [
-      {
-        accountId: String,
-      },
-    ],
+   
   },
   { timestamps: true }
 );
 
-//hashpassword before saving
 userSchema.pre<IUser>("save", async function (next) {
   if (!this.isModified("password")) {
     next();
@@ -68,20 +59,18 @@ userSchema.pre<IUser>("save", async function (next) {
   next();
 });
 
-//sign access token
 userSchema.methods.SignAccessToken = function () {
   return jwt.sign({id: this._id}, process.env.ACCESS_TOKEN || '',{
     expiresIn: '5m',
   })
 }
 
-//sign refresh token
 userSchema.methods.SignRefreshToken = function (){
   return jwt.sign({id: this._id}, process.env.REFRESH_TOKEN || '',{
     expiresIn: "3d"
   })
 }
-//compare password
+
 userSchema.methods.comparePassword = async function (
   enteredPassword: string
 ): Promise<boolean> {
